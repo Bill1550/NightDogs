@@ -15,6 +15,6 @@ interface AppComponent {
 
     fun inject( application: NightDogsApplication )
     fun inject( activity: MainActivity )
-    fun inject(petPixFragment: PetPixFragment)
+    fun inject( petPixFragment: PetPixFragment )
 
 }

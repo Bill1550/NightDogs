@@ -10,7 +10,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.loneoaktech.tests.nightdogs.data.model.RiseAndSet
 import com.loneoaktech.tests.nightdogs.data.repo.AstronomicalRepo
+import com.loneoaktech.tests.nightdogs.data.repo.LocationRepo
 import com.loneoaktech.tests.nightdogs.support.BaseFragment
+import com.loneoaktech.util.toast
 import kotlinx.android.synthetic.main.fragment_pet_pix.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,6 +34,7 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
     }
 
     @Inject lateinit var astronomicalRepo: AstronomicalRepo
+    @Inject lateinit var locationRepo: LocationRepo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,17 +78,18 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
         launch(Dispatchers.Main) {
             try {
                 showProgressSpinner(true)
-                astronomicalRepo.getSunTimes(
-                    Location("TEST").apply {
-                        latitude = 41.123
-                        longitude = -71.23
+
+                @Suppress("ReplaceSingleLineLet") // OK, i kind of like having the physical order of the calls match the flow.
+                locationRepo.getCurrentLocation().let { loc ->
+                    astronomicalRepo.getSunTimes( loc ).let { times ->
+                        displayTimes(loc, times)
                     }
-                ).let { times ->
-                    displayTimes(times)
                 }
+
 
             } catch ( t: Throwable ) {
                 Timber.e(t, "error returned from when refreshing pix fragment")
+                context.toast( "Error from api: ${t.message}")
             } finally {
                 showProgressSpinner(false)
             }
@@ -96,11 +100,12 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
         view?.progressSpinner?.visibility = if (show) View.VISIBLE else View.INVISIBLE
     }
 
-    private fun displayTimes( times: RiseAndSet ) {
+    private fun displayTimes( loc: Location, times: RiseAndSet ) {
         Timber.i("Display times: $times")
         view?.apply {
             sunriseView.text = "12:34:56"
             sunsetView.text = "01:23:45"
+            locationView.text = "${loc.latitude}, ${loc.longitude}"
         }
     }
 
@@ -129,9 +134,8 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE)
-            context?.let{ ctx ->
-                Toast.makeText(ctx, "Returned from set permissions", Toast.LENGTH_LONG).show()
-            }
+            context.toast("Returned from set permissions", Toast.LENGTH_LONG)
     }
+
 
 }

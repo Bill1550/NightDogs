@@ -17,6 +17,7 @@
             app:layout_constraintEnd_toStartOf="@id/locationView"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/sunriseLabel"
             android:layout_marginTop="8dp"
 
             />
@@ -27,7 +28,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/locationLabel"
             android:layout_marginStart="8dp"
-            app:layout_constraintEnd_toStartOf="@id/sunriseLabel"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBaseline_toBaselineOf="@id/locationLabel"
             tools:text = "41.5, -73.3"
             />
@@ -36,10 +37,11 @@
             android:id="@+id/sunriseLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/locationView"
-            android:layout_marginStart="24dp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/sunriseView"
-            app:layout_constraintBaseline_toBaselineOf="@id/locationView"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintTop_toBottomOf="@id/locationLabel"
+            android:layout_marginTop="8dp"
             android:text="@string/label_sunrise"
             />
 
@@ -76,6 +78,19 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBaseline_toBaselineOf="@+id/sunriseLabel"
             tools:text="18:45"
+            />
+
+    <ImageView
+            android:id="@+id/petImage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sunriseLabel"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:src="@tools:sample/avatars"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/description_pet_pix"
             />
 
     <ProgressBar

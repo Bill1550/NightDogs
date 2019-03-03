@@ -51,6 +51,8 @@ dependencies {
     // Permission request handler
     implementation 'pub.devrel:easypermissions:3.0.0'
 
+    // Goggle Play Services for the Fused Location Provider
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
 
     // Debug logging library
     implementation "com.jakewharton.timber:timber:4.7.1"
