@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">NightDogs</string>
+    <string name="action_settings">Settings</string>
+    <string name="label_location">Location:</string>
+    <string name="label_sunrise">Sunrise:</string>
+    <string name="label_sunset">Sunset:</string>
+    <string name="rational_location_permission">We need to location permission to figure out where we are.</string>
+</resources>
