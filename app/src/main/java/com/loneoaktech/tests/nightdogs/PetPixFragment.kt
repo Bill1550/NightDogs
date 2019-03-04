@@ -14,14 +14,13 @@ import com.loneoaktech.tests.nightdogs.data.repo.AstronomicalRepo
 import com.loneoaktech.tests.nightdogs.data.repo.LocationRepo
 import com.loneoaktech.tests.nightdogs.data.repo.PetPixRepo
 import com.loneoaktech.tests.nightdogs.support.BaseFragment
+import com.loneoaktech.util.getTimeAsLabeledOrNull
 import com.loneoaktech.util.toast
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_pet_pix.*
 import kotlinx.android.synthetic.main.fragment_pet_pix.view.*
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
@@ -32,7 +31,6 @@ import pub.devrel.easypermissions.EasyPermissions
 import timber.log.Timber
 import java.lang.Exception
 import javax.inject.Inject
-import kotlin.random.Random
 
 /**
  * Created by BillH on 3/2/2019
@@ -69,6 +67,11 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
         checkPermissionsAndLoad()
     }
 
+    override fun onPause() {
+        super.onPause()
+        kilAutoRefresh()
+    }
+
 
     /**
      * Always check to see if permission has ben granted by the user since they can revoke it at any time
@@ -76,9 +79,10 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
     @AfterPermissionGranted(RC_LOCATION_PERMISSION)
     fun checkPermissionsAndLoad() {
         context?.let { ctx ->
-            if (EasyPermissions.hasPermissions(ctx, *LOCATION_PERMISSION ))
+            if (EasyPermissions.hasPermissions(ctx, *LOCATION_PERMISSION )) {
                 loadData()
-            else
+                startAutoRefresh()
+            } else
                 EasyPermissions.requestPermissions(
                         this,
                         getString(R.string.rational_location_permission),
@@ -115,11 +119,7 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
                                 }
 
                             })
-
-
                     }
-
-
                 }
             } catch ( ce: CancellationException ) {
                 // fragment has been destroyed,
@@ -158,8 +158,39 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
 
     private fun determinePetType( times: RiseAndSet ): PetType {
 
-        return PetType.values()[Math.abs(Random.nextInt())%PetType.values().size] // TODO actually implement TOD test.
+        return ZonedDateTime.now().let { now ->
+            if ( (now >= times.riseTime) && (now <= times.setTime)  == resources.getBoolean(R.bool.cats_by_day) )
+                PetType.CAT
+            else
+                PetType.DOG
+        }
     }
+
+    private var refreshJob: Job? = null
+
+    private fun startAutoRefresh() {
+        refreshJob = launch {
+            try {
+                while (true) {
+                    resources.getTimeAsLabeledOrNull(R.string.auto_refresh_time)?.let { delayMsec ->
+                        delay(delayMsec)
+                        loadData()
+                    } ?: break
+                }
+            } catch (ce: CancellationException ){
+                // expected, just ignore
+            } catch (e: Exception) {
+                // kill timer on any exception
+                Timber.e(e, "Unexpected exception in refresh timer loop")
+            }
+        }
+    }
+
+    private fun kilAutoRefresh() {
+        refreshJob?.cancel()
+        refreshJob = null
+    }
+
 
     //-- Handle getting user's permission
 

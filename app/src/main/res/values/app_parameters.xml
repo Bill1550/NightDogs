@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="auto_refresh_time" translatable="false">20 sec</string>
+    <bool name="cats_by_day">false</bool>
+</resources>

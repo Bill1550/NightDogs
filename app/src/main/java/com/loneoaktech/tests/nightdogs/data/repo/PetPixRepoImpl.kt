@@ -1,9 +1,7 @@
 package com.loneoaktech.tests.nightdogs.data.repo
 
-import android.app.Application
 import android.net.Uri
 import com.loneoaktech.tests.nightdogs.api.pets.PetPixApi
-import com.loneoaktech.tests.nightdogs.data.errors.GeneralApplicationError
 import com.loneoaktech.tests.nightdogs.data.model.PetType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

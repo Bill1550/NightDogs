@@ -4,6 +4,8 @@ import android.net.Uri
 import com.loneoaktech.tests.nightdogs.data.model.PetType
 
 /**
+ * Repo that returns the random pet picture URL's.
+ * Actual image loading is done by Picasso in the View.
  * Created by BillH on 3/4/2019
  */
 interface PetPixRepo {
