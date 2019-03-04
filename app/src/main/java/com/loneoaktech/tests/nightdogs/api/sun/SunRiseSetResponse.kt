@@ -1,4 +1,4 @@
-package com.loneoaktech.tests.nightdogs.api.data
+package com.loneoaktech.tests.nightdogs.api.sun
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

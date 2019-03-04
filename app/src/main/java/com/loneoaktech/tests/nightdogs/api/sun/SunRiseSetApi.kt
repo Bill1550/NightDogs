@@ -1,6 +1,5 @@
 package com.loneoaktech.tests.nightdogs.api.sun
 
-import com.loneoaktech.tests.nightdogs.api.data.SunRiseSetResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Query

@@ -1,7 +1,6 @@
-package com.loneoaktech.tests.nightdogs.api.data
+package com.loneoaktech.tests.nightdogs.api.sun
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.loneoaktech.tests.nightdogs.api.sun.SunRiseSetApi
 import com.squareup.moshi.Moshi
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory

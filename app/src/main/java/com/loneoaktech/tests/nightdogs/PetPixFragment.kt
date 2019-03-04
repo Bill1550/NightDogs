@@ -8,9 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.loneoaktech.tests.nightdogs.data.model.PetType
 import com.loneoaktech.tests.nightdogs.data.model.RiseAndSet
 import com.loneoaktech.tests.nightdogs.data.repo.AstronomicalRepo
 import com.loneoaktech.tests.nightdogs.data.repo.LocationRepo
+import com.loneoaktech.tests.nightdogs.data.repo.PetPixRepo
 import com.loneoaktech.tests.nightdogs.support.BaseFragment
 import com.loneoaktech.util.toast
 import kotlinx.android.synthetic.main.fragment_pet_pix.view.*
@@ -26,6 +28,7 @@ import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.random.Random
 
 /**
  * Created by BillH on 3/2/2019
@@ -40,6 +43,7 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
 
     @Inject lateinit var astronomicalRepo: AstronomicalRepo
     @Inject lateinit var locationRepo: LocationRepo
+    @Inject lateinit var petPixRepo: PetPixRepo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +53,9 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_pet_pix, container, false).apply {
                 progressSpinner.visibility = View.INVISIBLE
+                refreshButton.setOnClickListener {
+                    loadData()
+                }
         }
     }
 
@@ -88,7 +95,12 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
                 locationRepo.getCurrentLocation().let { loc ->
                     astronomicalRepo.getSunTimes(loc).let { times ->
                         displayTimes(loc, times)
+
+                        val pixUrl = petPixRepo.getRandomPetPixUrl( determinePetType(times) )
+                        Timber.i("Pet pix url: $pixUrl")
                     }
+
+
                 }
             } catch ( ce: CancellationException ) {
                 // fragment has been destroyed,
@@ -104,6 +116,7 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
 
     private fun showProgressSpinner( show: Boolean ){
         view?.progressSpinner?.visibility = if (show) View.VISIBLE else View.INVISIBLE
+        view?.refreshButton?.visibility = if (show) View.GONE else View.VISIBLE
     }
 
     private fun displayTimes( loc: Location, times: RiseAndSet ) {
@@ -124,7 +137,14 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
 
     private val timeFormatter by lazy { DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault()) }
 
+    private fun determinePetType( times: RiseAndSet ): PetType {
+
+        return PetType.values()[Math.abs(Random.nextInt())%PetType.values().size] // TODO actually implement TOD test.
+    }
+
     //-- Handle getting user's permission
+
+    // TODO move this into base class.
 
     /**
      * Overridden to pass the request response to the Easy Permissions lib.
@@ -150,6 +170,7 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
         if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE)
             context.toast("Returned from set permissions", Toast.LENGTH_LONG)
     }
+
 
 
 }

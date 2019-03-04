@@ -93,6 +93,20 @@
             android:contentDescription="@string/description_pet_pix"
             />
 
+    <ImageButton
+            android:id="@+id/refreshButton"
+            android:layout_width="@dimen/icon_button_size"
+            android:layout_height="@dimen/icon_button_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="@dimen/icon_button_margin"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="@dimen/icon_button_margin"
+            android:src="@drawable/ic_autorenew_white_24dp"
+            android:contentDescription="@string/description_refresh_pix"
+            android:background="@color/colorBackground"
+            android:scaleType="fitCenter"
+            />
+
     <ProgressBar
             android:id="@+id/progressSpinner"
             android:layout_width="72dp"
