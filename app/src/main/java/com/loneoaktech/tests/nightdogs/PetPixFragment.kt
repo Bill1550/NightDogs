@@ -1,13 +1,11 @@
 package com.loneoaktech.tests.nightdogs
 
 import android.Manifest
-import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.loneoaktech.tests.nightdogs.data.model.PetType
 import com.loneoaktech.tests.nightdogs.data.model.RiseAndSet
 import com.loneoaktech.tests.nightdogs.data.repo.AstronomicalRepo
@@ -25,22 +23,22 @@ import org.threeten.bp.ZoneId
 import org.threeten.bp.ZonedDateTime
 import org.threeten.bp.format.DateTimeFormatter
 import org.threeten.bp.format.FormatStyle
-import pub.devrel.easypermissions.AfterPermissionGranted
-import pub.devrel.easypermissions.AppSettingsDialog
-import pub.devrel.easypermissions.EasyPermissions
 import timber.log.Timber
-import java.lang.Exception
 import javax.inject.Inject
 
 /**
+ * Fragment that displays the pet picture.
+ * Has the current location and sunrise and sunset times at the top.
+ *
+ * Provides a refresh button to get a different pet.
+ *
  * Created by BillH on 3/2/2019
  */
-class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
+class PetPixFragment : BaseFragment() {
 
 
     companion object {
         val LOCATION_PERMISSION = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-        const val RC_LOCATION_PERMISSION = 42
     }
 
     @Inject lateinit var astronomicalRepo: AstronomicalRepo
@@ -64,33 +62,18 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
 
     override fun onResume() {
         super.onResume()
-        checkPermissionsAndLoad()
+
+        // Double check permissions every time we run since user may disable them at any time.
+        checkPermissionAndRun(LOCATION_PERMISSION, R.string.rationale_location_permission){
+            loadData()
+            startAutoRefresh()
+        }
+
     }
 
     override fun onPause() {
         super.onPause()
         kilAutoRefresh()
-    }
-
-
-    /**
-     * Always check to see if permission has ben granted by the user since they can revoke it at any time
-     */
-    @AfterPermissionGranted(RC_LOCATION_PERMISSION)
-    fun checkPermissionsAndLoad() {
-        context?.let { ctx ->
-            if (EasyPermissions.hasPermissions(ctx, *LOCATION_PERMISSION )) {
-                loadData()
-                startAutoRefresh()
-            } else
-                EasyPermissions.requestPermissions(
-                        this,
-                        getString(R.string.rational_location_permission),
-                        RC_LOCATION_PERMISSION,
-                        *LOCATION_PERMISSION
-                )
-                // After permission is granted will call back into this function (due to @AfterPermissionGranted attribute)
-        }
     }
 
 
@@ -103,7 +86,7 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
                 @Suppress("ReplaceSingleLineLet") // OK, i kind of like having the physical order of the calls match the flow.
                 locationRepo.getCurrentLocation().let { loc ->
                     astronomicalRepo.getSunTimes(loc).let { times ->
-                        displayTimes(loc, times)
+                        bindTimes(loc, times)
 
                         val pixUrl = petPixRepo.getRandomPetPixUrl( determinePetType(times) )
                         Timber.i("Pet pix url: $pixUrl")
@@ -138,7 +121,7 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
         view?.refreshButton?.visibility = if (show) View.GONE else View.VISIBLE
     }
 
-    private fun displayTimes( loc: Location, times: RiseAndSet ) {
+    private fun bindTimes(loc: Location, times: RiseAndSet ) {
         Timber.i("Display times: $times")
         view?.apply {
             sunriseView.text = times.riseTime.formatTime()
@@ -166,6 +149,7 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
         }
     }
 
+
     private var refreshJob: Job? = null
 
     private fun startAutoRefresh() {
@@ -190,37 +174,4 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
         refreshJob?.cancel()
         refreshJob = null
     }
-
-
-    //-- Handle getting user's permission
-
-    // TODO move this into base class.
-
-    /**
-     * Overridden to pass the request response to the Easy Permissions lib.
-     */
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
-    }
-
-    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
-        Timber.i("Permissions denied=$perms")
-
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, LOCATION_PERMISSION.toList() ))
-            AppSettingsDialog.Builder(this).build().show()
-    }
-
-    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        Timber.i("Permissions granted=$perms")
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE)
-            context.toast("Returned from set permissions", Toast.LENGTH_LONG)
-    }
-
-
-
 }

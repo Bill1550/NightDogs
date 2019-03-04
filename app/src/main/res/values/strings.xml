@@ -4,8 +4,10 @@
     <string name="label_location">Location:</string>
     <string name="label_sunrise">Sunrise:</string>
     <string name="label_sunset">Sunset:</string>
-    <string name="rational_location_permission">We need to location permission to figure out where we are.</string>
+    <string name="rationale_location_permission">We need to location permission to figure out where we are.</string>
     <string name="description_pet_pix">A picture of a wonderful pet.</string>
     <string name="error_sun_time_api_error">Sorry, unable to access sunset/sunrise database.</string>
     <string name="description_refresh_pix">Display another picture.</string>
+    <string name="message_permission_needed">We need these permissions to run.</string>
+    <string name="message_required_permission">We must hat permission to run.</string>
 </resources>
