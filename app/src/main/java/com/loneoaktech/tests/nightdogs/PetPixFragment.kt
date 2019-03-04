@@ -12,7 +12,9 @@ import com.loneoaktech.tests.nightdogs.data.repo.AstronomicalRepo
 import com.loneoaktech.tests.nightdogs.data.repo.LocationRepo
 import com.loneoaktech.tests.nightdogs.data.repo.PetPixRepo
 import com.loneoaktech.tests.nightdogs.support.BaseFragment
+import com.loneoaktech.util.formatTimeMedium
 import com.loneoaktech.util.getTimeAsLabeledOrNull
+import com.loneoaktech.util.launchWithUx
 import com.loneoaktech.util.toast
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -79,68 +81,64 @@ class PetPixFragment : BaseFragment() {
 
     private fun loadData() {
 
-        launch(Dispatchers.Main) {
-            try {
-                showProgressSpinner(true)
-
-                @Suppress("ReplaceSingleLineLet") // OK, i kind of like having the physical order of the calls match the flow.
-                locationRepo.getCurrentLocation().let { loc ->
-                    astronomicalRepo.getSunTimes(loc).let { times ->
-                        bindTimes(loc, times)
-
-                        val pixUrl = petPixRepo.getRandomPetPixUrl( determinePetType(times) )
-                        Timber.i("Pet pix url: $pixUrl")
-                        picasso
-                            .load(pixUrl)
-                            .error(R.drawable.ic_autorenew_white_24dp)
-                            .into(petImage, object: Callback {
+        launchWithUx( ::showProgressSpinner, ::showError ) {
+            @Suppress("ReplaceSingleLineLet") // OK, i kind of like having the physical order of the calls match the flow.
+            locationRepo.getCurrentLocation().let { loc ->
+                astronomicalRepo.getSunTimes(loc).let { times ->
+                    bindTimes(loc, times)
+                    val pet = determinePetType(times)
+                    val pixUrl = petPixRepo.getRandomPetPixUrl( pet )
+                    Timber.i("Pet pix url: $pixUrl")
+                    picasso
+                        .load(pixUrl.toString())
+                        .error(if (pet == PetType.DOG) R.drawable.default_dog else R.drawable.default_cat)
+                        .into(petImage, object: Callback {
                                 override fun onSuccess() {
                                 }
 
                                 override fun onError(e: Exception?) {
                                     Timber.e(" Error loading image $pixUrl, error=${e?.message}")
                                 }
-
-                            })
-                    }
+                            }
+                        )
                 }
-            } catch ( ce: CancellationException ) {
-                // fragment has been destroyed,
-
-            } catch ( t: Throwable ) {
-                Timber.e(t, "error returned from when refreshing pix fragment")
-                context.toast( "Error from api: ${t.message}")
-            } finally {
-                showProgressSpinner(false)
             }
         }
     }
 
+    /**
+     * Turn thr progress spinner on and off.
+     * Also hide the refresh button while we are loading.
+     */
     private fun showProgressSpinner( show: Boolean ){
         view?.progressSpinner?.visibility = if (show) View.VISIBLE else View.INVISIBLE
         view?.refreshButton?.visibility = if (show) View.GONE else View.VISIBLE
     }
 
+    /**
+     * Display an appropriate error message to the user.
+     * A real app would need to do more.
+     */
+    private fun showError( t: Throwable ){
+        Timber.e(t, "error returned from when refreshing pix fragment")
+        context.toast( "Error from api: ${t.message}")
+    }
+
     private fun bindTimes(loc: Location, times: RiseAndSet ) {
         Timber.i("Display times: $times")
         view?.apply {
-            sunriseView.text = times.riseTime.formatTime()
-            sunsetView.text = times.setTime.formatTime()
-            locationView.text = "${loc.latitude}, ${loc.longitude}"
+            sunriseView.text = times.riseTime.formatTimeMedium()
+            sunsetView.text = times.setTime.formatTimeMedium()
+            locationView.text = getString(R.string.location_format, loc.latitude, loc.longitude )
         }
     }
 
+
     /**
-     * Nicely format the time in the local time zone.
+     * Business rules here. Should really be in a central spot.
+     * Determine whether to display a dog or a cat pix
      */
-    private fun ZonedDateTime.formatTime() =
-        this.withZoneSameInstant(ZoneId.systemDefault())
-            .format( timeFormatter )
-
-    private val timeFormatter by lazy { DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault()) }
-
     private fun determinePetType( times: RiseAndSet ): PetType {
-
         return ZonedDateTime.now().let { now ->
             if ( (now >= times.riseTime) && (now <= times.setTime)  == resources.getBoolean(R.bool.cats_by_day) )
                 PetType.CAT

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="auto_refresh_time" translatable="false">1 min</string>
-    <bool name="cats_by_day">false</bool>
+    <bool name="cats_by_day">true</bool>
 </resources>

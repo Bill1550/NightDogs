@@ -10,4 +10,5 @@
     <string name="description_refresh_pix">Display another picture.</string>
     <string name="message_permission_needed">We need these permissions to run.</string>
     <string name="message_required_permission">We must hat permission to run.</string>
+    <string name="location_format">%1$.3f, %2$.3f</string>
 </resources>

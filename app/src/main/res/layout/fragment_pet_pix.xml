@@ -19,7 +19,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/sunriseLabel"
             android:layout_marginTop="8dp"
-
+            style="@style/AnnotationLabel"
             />
 
     <TextView
@@ -31,6 +31,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBaseline_toBaselineOf="@id/locationLabel"
             tools:text = "41.5, -73.3"
+            style="@style/AnnotationText"
             />
 
     <TextView
@@ -43,6 +44,7 @@
             app:layout_constraintTop_toBottomOf="@id/locationLabel"
             android:layout_marginTop="8dp"
             android:text="@string/label_sunrise"
+            style="@style/AnnotationLabel"
             />
 
     <TextView
@@ -55,6 +57,7 @@
 
             app:layout_constraintBaseline_toBaselineOf="@id/sunriseLabel"
             tools:text="6:23"
+            style="@style/AnnotationText"
             />
 
     <TextView
@@ -66,7 +69,7 @@
             app:layout_constraintEnd_toStartOf="@id/sunsetView"
             app:layout_constraintBaseline_toBaselineOf="@id/sunriseView"
             android:text="@string/label_sunset"
-
+            style="@style/AnnotationLabel"
             />
 
     <TextView
@@ -78,6 +81,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBaseline_toBaselineOf="@+id/sunriseLabel"
             tools:text="18:45"
+            style="@style/AnnotationText"
             />
 
     <ImageView
