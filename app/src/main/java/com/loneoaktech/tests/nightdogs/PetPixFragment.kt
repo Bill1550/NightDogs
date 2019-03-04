@@ -15,6 +15,9 @@ import com.loneoaktech.tests.nightdogs.data.repo.LocationRepo
 import com.loneoaktech.tests.nightdogs.data.repo.PetPixRepo
 import com.loneoaktech.tests.nightdogs.support.BaseFragment
 import com.loneoaktech.util.toast
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.fragment_pet_pix.*
 import kotlinx.android.synthetic.main.fragment_pet_pix.view.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +30,7 @@ import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import timber.log.Timber
+import java.lang.Exception
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -44,6 +48,7 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
     @Inject lateinit var astronomicalRepo: AstronomicalRepo
     @Inject lateinit var locationRepo: LocationRepo
     @Inject lateinit var petPixRepo: PetPixRepo
+    @Inject lateinit var picasso: Picasso
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,6 +103,20 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
 
                         val pixUrl = petPixRepo.getRandomPetPixUrl( determinePetType(times) )
                         Timber.i("Pet pix url: $pixUrl")
+                        picasso
+                            .load(pixUrl)
+                            .error(R.drawable.ic_autorenew_white_24dp)
+                            .into(petImage, object: Callback {
+                                override fun onSuccess() {
+                                }
+
+                                override fun onError(e: Exception?) {
+                                    Timber.e(" Error loading image $pixUrl, error=${e?.message}")
+                                }
+
+                            })
+
+
                     }
 
 
