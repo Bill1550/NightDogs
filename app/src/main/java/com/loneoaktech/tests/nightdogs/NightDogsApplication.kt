@@ -1,6 +1,7 @@
 package com.loneoaktech.tests.nightdogs
 
 import android.app.Application
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.loneoaktech.tests.nightdogs.di.AppComponent
 import com.loneoaktech.tests.nightdogs.di.AppModule
 import com.loneoaktech.tests.nightdogs.di.DaggerAppComponent
@@ -29,5 +30,7 @@ class NightDogsApplication : Application() {
 
         if (BuildConfig.DEBUG)
             Timber.plant(Timber.DebugTree())
+
+        AndroidThreeTen.init(this)
     }
 }

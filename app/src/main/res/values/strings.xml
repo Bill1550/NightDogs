@@ -6,4 +6,5 @@
     <string name="label_sunset">Sunset:</string>
     <string name="rational_location_permission">We need to location permission to figure out where we are.</string>
     <string name="description_pet_pix">A picture of a wonderful pet.</string>
+    <string name="error_sun_time_api_error">Sorry, unable to access sunset/sunrise database.</string>
 </resources>

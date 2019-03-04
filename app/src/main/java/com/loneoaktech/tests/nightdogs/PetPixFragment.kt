@@ -14,8 +14,13 @@ import com.loneoaktech.tests.nightdogs.data.repo.LocationRepo
 import com.loneoaktech.tests.nightdogs.support.BaseFragment
 import com.loneoaktech.util.toast
 import kotlinx.android.synthetic.main.fragment_pet_pix.view.*
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.threeten.bp.ZoneId
+import org.threeten.bp.ZonedDateTime
+import org.threeten.bp.format.DateTimeFormatter
+import org.threeten.bp.format.FormatStyle
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
@@ -81,11 +86,12 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
 
                 @Suppress("ReplaceSingleLineLet") // OK, i kind of like having the physical order of the calls match the flow.
                 locationRepo.getCurrentLocation().let { loc ->
-                    astronomicalRepo.getSunTimes( loc ).let { times ->
+                    astronomicalRepo.getSunTimes(loc).let { times ->
                         displayTimes(loc, times)
                     }
                 }
-
+            } catch ( ce: CancellationException ) {
+                // fragment has been destroyed,
 
             } catch ( t: Throwable ) {
                 Timber.e(t, "error returned from when refreshing pix fragment")
@@ -103,12 +109,20 @@ class PetPixFragment : BaseFragment(), EasyPermissions.PermissionCallbacks {
     private fun displayTimes( loc: Location, times: RiseAndSet ) {
         Timber.i("Display times: $times")
         view?.apply {
-            sunriseView.text = "12:34:56"
-            sunsetView.text = "01:23:45"
+            sunriseView.text = times.riseTime.formatTime()
+            sunsetView.text = times.setTime.formatTime()
             locationView.text = "${loc.latitude}, ${loc.longitude}"
         }
     }
 
+    /**
+     * Nicely format the time in the local time zone.
+     */
+    private fun ZonedDateTime.formatTime() =
+        this.withZoneSameInstant(ZoneId.systemDefault())
+            .format( timeFormatter )
+
+    private val timeFormatter by lazy { DateTimeFormatter.ofLocalizedTime(FormatStyle.MEDIUM).withZone(ZoneId.systemDefault()) }
 
     //-- Handle getting user's permission
 
