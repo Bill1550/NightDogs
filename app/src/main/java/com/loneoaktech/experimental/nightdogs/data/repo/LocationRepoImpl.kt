@@ -2,6 +2,7 @@ package com.loneoaktech.experimental.nightdogs.data.repo
 
 import android.app.Application
 import android.location.Location
+import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.LocationServices
 import com.loneoaktech.util.summary
@@ -33,13 +34,16 @@ class LocationRepoImpl @Inject constructor( private val application: Application
             suspendCoroutine<Location> { continuation ->
 
                 try {
-                        Timber.w("play service availability: ${GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(application)}")
+                    with(GoogleApiAvailability.getInstance() ){
+                        val status = isGooglePlayServicesAvailable(application)
+                        if (status != ConnectionResult.SUCCESS)
+                            Timber.w("Play Services NOT available, correctable=${isUserResolvableError(status)}")
+                    }
 
-
-                        locationClient.lastLocation.addOnCompleteListener { task ->
-                            task.result?.let { continuation.resume( it )}
-                                ?: continuation.resumeWithException( Exception("Location data is not available"))
-                        }
+                    locationClient.lastLocation.addOnCompleteListener { task ->
+                        task.result?.let { continuation.resume( it )}
+                            ?: continuation.resumeWithException( Exception("Location data is not available, try turning on location services."))
+                    }
                 } catch (se: SecurityException) {
                     // Explicitly catch a security exception to satisfy Lint.
                     // Permissions are (should be) checked in calling view, so this is can be handled as a simple error.
