@@ -93,7 +93,7 @@
             app:layout_constraintTop_toBottomOf="@+id/sunriseLabel"
             app:layout_constraintBottom_toBottomOf="parent"
             tools:src="@tools:sample/avatars"
-            android:scaleType="centerCrop"
+            android:scaleType="fitCenter"
             android:contentDescription="@string/description_pet_pix"
             />
 

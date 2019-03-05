@@ -4,6 +4,8 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 /**
+ * JSON returned by the random dogs end point.
+ *
  * Created by BillH on 3/4/2019
  */
 @JsonClass(generateAdapter = true)

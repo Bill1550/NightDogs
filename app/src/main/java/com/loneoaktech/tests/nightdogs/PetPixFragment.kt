@@ -16,15 +16,14 @@ import com.loneoaktech.util.formatTimeMedium
 import com.loneoaktech.util.getTimeAsLabeledOrNull
 import com.loneoaktech.util.launchWithUx
 import com.loneoaktech.util.toast
-import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_pet_pix.*
 import kotlinx.android.synthetic.main.fragment_pet_pix.view.*
-import kotlinx.coroutines.*
-import org.threeten.bp.ZoneId
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.threeten.bp.ZonedDateTime
-import org.threeten.bp.format.DateTimeFormatter
-import org.threeten.bp.format.FormatStyle
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -37,7 +36,6 @@ import javax.inject.Inject
  * Created by BillH on 3/2/2019
  */
 class PetPixFragment : BaseFragment() {
-
 
     companion object {
         val LOCATION_PERMISSION = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -79,6 +77,9 @@ class PetPixFragment : BaseFragment() {
     }
 
 
+    /**
+     * The basic data load routine.
+     */
     private fun loadData() {
 
         launchWithUx( ::showProgressSpinner, ::showError ) {
@@ -86,22 +87,8 @@ class PetPixFragment : BaseFragment() {
             locationRepo.getCurrentLocation().let { loc ->
                 astronomicalRepo.getSunTimes(loc).let { times ->
                     bindTimes(loc, times)
-                    val pet = determinePetType(times)
-                    val pixUrl = petPixRepo.getRandomPetPixUrl( pet )
-                    Timber.i("Pet pix url: $pixUrl")
-                    picasso
-                        .load(pixUrl.toString())
-                        .error(if (pet == PetType.DOG) R.drawable.default_dog else R.drawable.default_cat)
-                        .into(petImage, object: Callback {
-                                override fun onSuccess() {
-                                }
-
-                                override fun onError(e: Exception?) {
-                                    Timber.e(" Error loading image $pixUrl, error=${e?.message}")
-                                }
-                            }
-                        )
-                }
+                    petPixRepo.loadPetPix( determinePetType(times), petImage )
+               }
             }
         }
     }
@@ -150,6 +137,9 @@ class PetPixFragment : BaseFragment() {
 
     private var refreshJob: Job? = null
 
+    /**
+     * Create a timer job that will load on the refresh interval set in app_parameters.
+     */
     private fun startAutoRefresh() {
         refreshJob = launch {
             try {
@@ -168,6 +158,9 @@ class PetPixFragment : BaseFragment() {
         }
     }
 
+    /**
+     * Stop the auto refresh job.
+     */
     private fun kilAutoRefresh() {
         refreshJob?.cancel()
         refreshJob = null
