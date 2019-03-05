@@ -10,7 +10,7 @@ import retrofit2.http.Query
 interface SunRiseSetApi {
 
     @GET("/json")
-    fun getSunRiseAndSet(
+    fun getSunRiseAndSetAsync(
         @Query("lat") latitude: Double,
         @Query("lng") longitude: Double,
         @Query("formatted") formatted: Int = 0

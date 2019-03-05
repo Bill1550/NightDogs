@@ -4,7 +4,7 @@ import android.app.Application
 import android.location.Location
 import com.loneoaktech.experimental.nightdogs.R
 import com.loneoaktech.experimental.nightdogs.api.sun.SunRiseSetApi
-import com.loneoaktech.experimental.nightdogs.data.errors.throwApplicatoinError
+import com.loneoaktech.experimental.nightdogs.data.errors.throwApplicationError
 import com.loneoaktech.experimental.nightdogs.data.model.RiseAndSet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -18,7 +18,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class AstronomicalRepoImpl @Inject constructor(
-    val sunApi: SunRiseSetApi,
+    private val sunApi: SunRiseSetApi,
     val application: Application
 ) : AstronomicalRepo  {
 
@@ -30,7 +30,7 @@ class AstronomicalRepoImpl @Inject constructor(
         // TODO cache results based on date and location.
 
         return withContext(Dispatchers.IO) {
-            sunApi.getSunRiseAndSet(
+            sunApi.getSunRiseAndSetAsync(
                 latitude = location.latitude,
                 longitude = location.longitude
             ).await().let { resp ->
@@ -38,7 +38,7 @@ class AstronomicalRepoImpl @Inject constructor(
 
                 // TODO check status
                 if (resp.status != "OK")
-                    application.throwApplicatoinError("Bad status returned by api: ${resp.status}", R.string.error_sun_time_api_error)
+                    application.throwApplicationError("Bad status returned by api: ${resp.status}", R.string.error_sun_time_api_error)
 
                 RiseAndSet(
                     body = "Sun",

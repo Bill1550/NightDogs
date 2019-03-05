@@ -12,7 +12,7 @@ import org.threeten.bp.format.FormatStyle
 /**
  * Nicely format the time in the local time zone.
  */
-fun ZonedDateTime.formatTimeMedium() =
+fun ZonedDateTime.formatTimeMedium(): String =
     this.withZoneSameInstant(ZoneId.systemDefault())
         .format( timeFormatter )
 

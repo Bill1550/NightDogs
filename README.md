@@ -1,7 +1,9 @@
 # NightDogs
 Android demo app using Kotlin coroutines and Moshi with Retrofit.
 
-The uses a repo based pattern. Coroutines can provide a much cleaner implementation
+The app uses a repo based pattern.
+
+This app is an experiment to see if coroutines can provide a much cleaner implementation
 for basic asynchronous operation than RxJava.
 
 ## Problem Statement ##
@@ -12,14 +14,14 @@ old and somewhat senile.
 The cat has a tendency to spend much of the night screaming loudly 
 seemingly in defiance of the laws of physics (how could so much noise 
 come from such a small package).  To offset this stress during the long 
-hours of coding, Willy likes to have cute pictures of cats and dogs 
+hours of coding, Willy likes to have cute pictures of pets 
 presented on his phone (or old Nexus 7 tablet). Dog pictures displayed 
 during the night to remind him that there are better pets around, 
 and cats during the day to try to convince him that cats aren’t all 
 that bad after all. Now Willy is a bit of a nutcase when it comes to time. 
 (and the cat is surprisingly punctual). 
 He wants the cat pictures displayed between local sunrise and sunset, 
-and the dog pictures displayed during the inverse.  
+and the dog pictures displayed during the inverse. 
 Also he wants the picture updated every 5 minutes.
 
 So, the app should:
@@ -37,7 +39,7 @@ and he frequently moves from one coffee shop to another while coding.
  coordinates (latitude and longitude) and the time of the next solar 
  event on the screen w/ the picture, that’s fine.
 
-### API’s:
+### APIs:
 
 Sunrise/Sunset API:
 https://sunrise-sunset.org/api

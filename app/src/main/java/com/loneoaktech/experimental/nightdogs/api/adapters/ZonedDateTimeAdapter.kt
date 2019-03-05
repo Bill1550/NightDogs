@@ -10,6 +10,7 @@ import org.threeten.bp.format.DateTimeFormatter
  *
  * Created by BillH on 3/3/2019
  */
+@Suppress("unused")
 class ZonedDateTimeTypeAdapter {
 
     @ToJson

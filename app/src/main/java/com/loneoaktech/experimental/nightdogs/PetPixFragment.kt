@@ -16,7 +16,6 @@ import com.loneoaktech.util.formatTimeMedium
 import com.loneoaktech.util.getTimeAsLabeledOrNull
 import com.loneoaktech.util.launchWithUx
 import com.loneoaktech.util.toast
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_pet_pix.*
 import kotlinx.android.synthetic.main.fragment_pet_pix.view.*
 import kotlinx.coroutines.CancellationException
@@ -44,7 +43,6 @@ class PetPixFragment : BaseFragment() {
     @Inject lateinit var astronomicalRepo: AstronomicalRepo
     @Inject lateinit var locationRepo: LocationRepo
     @Inject lateinit var petPixRepo: PetPixRepo
-    @Inject lateinit var picasso: Picasso
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

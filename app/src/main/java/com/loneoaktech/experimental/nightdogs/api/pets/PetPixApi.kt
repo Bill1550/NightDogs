@@ -10,12 +10,12 @@ import retrofit2.http.GET
 interface PetPixApi {
 
     @GET("https://random.dog/woof.json")
-    fun getRandomDog(): Deferred<RandomDogPixResponse>
+    fun getRandomDogAsync(): Deferred<RandomDogPixResponse>
 
     @GET("https://aws.random.cat/meow")
-    fun getRandomCat(): Deferred<RandomCatPixResponse>
+    fun getRandomCatAsync(): Deferred<RandomCatPixResponse>
 
     @GET("https://randomfox.ca/floof/")
-    fun getRandomFox(): Deferred<RandomFoxPixResponse>
+    fun getRandomFoxAsync(): Deferred<RandomFoxPixResponse>
 
 }

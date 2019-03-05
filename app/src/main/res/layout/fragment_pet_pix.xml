@@ -105,7 +105,7 @@
             android:layout_marginEnd="@dimen/icon_button_margin"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="@dimen/icon_button_margin"
-            android:src="@drawable/ic_autorenew_white_24dp"
+            android:src="@drawable/ic_auto_renew_white_24dp"
             android:contentDescription="@string/description_refresh_pix"
             android:background="@color/colorBackground"
             android:scaleType="fitCenter"

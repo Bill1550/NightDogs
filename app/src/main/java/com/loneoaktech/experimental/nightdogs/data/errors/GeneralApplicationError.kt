@@ -13,7 +13,7 @@ class GeneralApplicationError(
     debugMessage: String
 ) : Exception( debugMessage )
 
-fun Context?.throwApplicatoinError( debugMessage: String, @StringRes msgId: Int? = null ): Nothing {
+fun Context?.throwApplicationError(debugMessage: String, @StringRes msgId: Int? = null ): Nothing {
     throw GeneralApplicationError(
 
         displayMessage = this?.let { ctx ->

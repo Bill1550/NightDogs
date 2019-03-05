@@ -50,9 +50,9 @@ class PetPixRepoImpl @Inject constructor(
 
     private suspend fun loadUrl( petType: PetType): Uri {
         return when (petType) {
-            PetType.CAT -> petPixApi.getRandomCat()
-            PetType.DOG -> petPixApi.getRandomDog()
-            PetType.FOX -> petPixApi.getRandomFox()
+            PetType.CAT -> petPixApi.getRandomCatAsync()
+            PetType.DOG -> petPixApi.getRandomDogAsync()
+            PetType.FOX -> petPixApi.getRandomFoxAsync()
         }.await().pixUrl.let { Uri.parse(it) }          // TODO sanitize the URL.
     }
 

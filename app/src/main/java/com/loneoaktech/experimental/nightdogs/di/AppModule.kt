@@ -15,6 +15,7 @@ import javax.inject.Singleton
 /**
  * Created by BillH on 3/1/2019
  */
+@Suppress("unused")
 @Module
 class AppModule(val application: Application) {
 
