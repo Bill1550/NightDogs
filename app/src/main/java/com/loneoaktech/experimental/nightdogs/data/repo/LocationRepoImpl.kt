@@ -45,7 +45,7 @@ class LocationRepoImpl @Inject constructor( private val application: Application
 
                     locationClient.lastLocation.addOnCompleteListener { task ->
                         task.result?.let { continuation.resume( it )}
-                            ?: continuation.resumeWithException( Exception("Location data is not available, try turning on location services."))
+                            ?: continuation.resumeWithException( Exception(LocationHelper.getLocationErrorMessage(application)))
                     }
                 } catch (se: SecurityException) {
                     // Explicitly catch a security exception to satisfy Lint.
