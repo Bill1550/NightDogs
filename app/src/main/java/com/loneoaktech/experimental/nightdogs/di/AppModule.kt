@@ -38,7 +38,7 @@ class AppModule(val application: Application) {
     @Singleton
     internal fun providePicassoInstance(application: Application): Picasso {
         return Picasso.Builder( application )
-            .indicatorsEnabled( BuildConfig.DEBUG )
+            .indicatorsEnabled( false ) // BuildConfig.DEBUG )
             .loggingEnabled( false ) //  BuildConfig.DEBUG )
             .build()
     }
