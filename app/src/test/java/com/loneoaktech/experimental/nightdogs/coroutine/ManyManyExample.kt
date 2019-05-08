@@ -13,8 +13,6 @@ import kotlin.system.measureTimeMillis
  */
 class ManyManyExample {
 
-
-
     /**
      * Run a bunch of coroutines concurrently and return the execution time.
      */
