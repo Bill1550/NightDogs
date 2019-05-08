@@ -5,6 +5,7 @@ import android.location.Location
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.LocationServices
+import com.loneoaktech.util.LocationHelper
 import com.loneoaktech.util.summary
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -40,9 +41,11 @@ class LocationRepoImpl @Inject constructor( private val application: Application
                             Timber.w("Play Services NOT available, correctable=${isUserResolvableError(status)}")
                     }
 
+                    Timber.w("Location services, gps=${LocationHelper.isGpsEnabled(application)}, network=${LocationHelper.isNetworkEnabled(application)}")
+
                     locationClient.lastLocation.addOnCompleteListener { task ->
                         task.result?.let { continuation.resume( it )}
-                            ?: continuation.resumeWithException( Exception("Location data is not available, try turning on location services."))
+                            ?: continuation.resumeWithException( Exception(LocationHelper.getLocationErrorMessage(application)))
                     }
                 } catch (se: SecurityException) {
                     // Explicitly catch a security exception to satisfy Lint.

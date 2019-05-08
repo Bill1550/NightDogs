@@ -11,4 +11,7 @@
     <string name="message_permission_needed">We need these permissions to run.</string>
     <string name="message_required_permission">We must hat permission to run.</string>
     <string name="location_format">%1$.3f, %2$.3f</string>
+    <string name="error_google_play_services_not_available">Google Play Services are not available, try reinstalling.</string>
+    <string name="error_gps_disabled">The phone\'s GPS is off. Try enabling location services.</string>
+    <string name="error_unknown_location_error">Location not available for some unknown reason.</string>
 </resources>
