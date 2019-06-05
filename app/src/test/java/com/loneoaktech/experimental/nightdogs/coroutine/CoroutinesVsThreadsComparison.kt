@@ -12,7 +12,7 @@ import kotlin.system.measureTimeMillis
 /**
  * Created by BillH on 5/8/2019
  */
-class CoroutineVsThreadDemo {
+class CoroutinesVsThreadsComparison {
 
     @Test
     fun runCoroutines() {

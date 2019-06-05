@@ -11,7 +11,35 @@ import kotlin.system.measureTimeMillis
 /**
  * Created by BillH on 5/8/2019
  */
-class ManyManyExample {
+class CoroutinesVsThreadsTest {
+
+    @Test
+    fun compareCoroutinesAndThreads() {
+
+        runBlocking { delay(10) } // initialize the coroutine system so that time isn't in sampls below
+
+        val counter = AtomicInteger(0)
+        val delayTime = 100L
+
+
+        listOf( 100, 1_000, 10_000, 100_000).forEach { num ->
+            counter.set(0)
+            val threadTime = runThreads(num){
+                sleep(delayTime)
+                counter.incrementAndGet()
+            }
+            assertEquals(num, counter.get())
+
+            counter.set(0)
+            val coroutineTime = runCoroutines(num) {
+                delay(delayTime)
+                counter.incrementAndGet()
+            }
+            assertEquals(num, counter.get())
+
+            System.out.println("num=$num, times: thread/coroutine= $threadTime / $coroutineTime, ratio: ${threadTime.toDouble()/coroutineTime.toDouble()} ")
+        }
+    }
 
     /**
      * Run a bunch of coroutines concurrently and return the execution time.
@@ -73,31 +101,5 @@ class ManyManyExample {
         }
     }
 
-    @Test
-    fun compareCoroutinesAndThreads() {
 
-        runBlocking { delay(10) } // initialize the coroutine system so that time isn't in sampls below
-
-        val counter = AtomicInteger(0)
-        val delayTime = 100L
-
-
-        listOf( 100, 1_000, 10_000, 100_000).forEach { num ->
-            counter.set(0)
-            val threadTime = runThreads(num){
-                sleep(delayTime)
-                counter.incrementAndGet()
-            }
-            assertEquals(num, counter.get())
-
-            counter.set(0)
-            val coroutineTime = runCoroutines(num) {
-                delay(delayTime)
-                counter.incrementAndGet()
-            }
-            assertEquals(num, counter.get())
-
-            System.out.println("num=$num, thread time=$threadTime, coroutine time=$coroutineTime")
-        }
-    }
 }
