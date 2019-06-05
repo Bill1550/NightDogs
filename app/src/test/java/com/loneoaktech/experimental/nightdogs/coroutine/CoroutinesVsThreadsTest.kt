@@ -21,7 +21,6 @@ class CoroutinesVsThreadsTest {
         val counter = AtomicInteger(0)
         val delayTime = 100L
 
-
         listOf( 100, 1_000, 10_000, 100_000).forEach { num ->
             counter.set(0)
             val threadTime = runThreads(num){
@@ -37,7 +36,7 @@ class CoroutinesVsThreadsTest {
             }
             assertEquals(num, counter.get())
 
-            System.out.println("num=$num, times: thread/coroutine= $threadTime / $coroutineTime, ratio: ${threadTime.toDouble()/coroutineTime.toDouble()} ")
+            println("num=$num, times: thread/coroutine= $threadTime / $coroutineTime, ratio: ${threadTime.toDouble()/coroutineTime.toDouble()} ")
         }
     }
 
